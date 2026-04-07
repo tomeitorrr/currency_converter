@@ -457,25 +457,22 @@ function fmt(n, decimals = 4) {
 }
 
 function updateCalc() {
-  if (!rates.USD) return;
-
-  const midFrom = getRate(fromCurrency);
-  const midTo = getRate(toCurrency);
-  const midRate = midTo / midFrom;
-  const yourRate = midRate * (1 - FX_FEE_PCT / 100);
-
   const fromAmt = parseFloat(document.getElementById('from-amount').value) || 0;
+  const toAmt   = parseFloat(document.getElementById('to-amount').value)   || 0;
+  // No API needed: yourRate = toAmt / fromAmt, midRate = yourRate + 0.35%
+
+  const yourRate = fromAmt > 0 ? toAmt / fromAmt : 0;
+  const midRate  = yourRate * (1 + FX_FEE_PCT / 100);
 
   const feeAmt = fromAmt * (FX_FEE_PCT / 100);
 
-  document.getElementById('mid-rate').textContent =
-    `${fromCurrency} 1 = ${toCurrency} ${fmt(midRate)}`;
-  document.getElementById('your-rate').textContent =
-    `${fromCurrency} 1 = ${toCurrency} ${fmt(yourRate)}`;
+  const rateStr = (r) => r > 0 ? `${fromCurrency} 1 = ${toCurrency} ${fmt(r)}` : '—';
+  document.getElementById('mid-rate').textContent  = rateStr(midRate);
+  document.getElementById('your-rate').textContent = rateStr(yourRate);
   document.getElementById('fx-fee-amt').textContent =
-    `${fromCurrency} ${fmt(feeAmt, 2)}`;
+    fromAmt > 0 ? `${fromCurrency} ${fmt(feeAmt, 2)}` : '—';
   document.getElementById('total-fees').textContent =
-    `${fromCurrency} ${fmt(feeAmt, 2)}`;
+    fromAmt > 0 ? `${fromCurrency} ${fmt(feeAmt, 2)}` : '—';
   document.getElementById('from-code-ref').textContent = fromCurrency;
 }
 
