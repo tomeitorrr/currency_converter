@@ -1,57 +1,312 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Convert funds</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-sans, system-ui); }
-.wrap { max-width: 500px; margin: 0 auto; padding: 1.5rem 1rem; }
-h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1.5rem; }
-.label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
-.max-label { font-size: 13px; color: var(--color-text-secondary); }
-.field { display: flex; align-items: center; border: 1.5px solid var(--color-border-primary); border-radius: var(--border-radius-lg); padding: 12px 14px; background: var(--color-background-primary); margin-bottom: 1rem; gap: 10px; }
-.field:focus-within { border-color: var(--color-border-info, #378ADD); }
-.field input[type=number] { flex: 1; border: none; outline: none; font-size: 20px; font-weight: 500; background: transparent; color: var(--color-text-primary); min-width: 0; }
-.field input[type=number]::-webkit-outer-spin-button,
-.field input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.currency-btn { display: flex; align-items: center; gap: 7px; border: none; background: transparent; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--color-text-primary); white-space: nowrap; padding: 4px 6px; border-radius: 8px; }
-.currency-btn:hover { background: var(--color-background-secondary); }
-.flag { font-size: 18px; line-height: 1; }
-.chevron { font-size: 11px; color: var(--color-text-secondary); }
-.hint { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 1rem; }
-.info-card { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 14px 16px; margin-bottom: 12px; }
-.info-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 14px; }
-.info-row .name { color: var(--color-text-secondary); }
-.info-row .val { font-weight: 500; color: var(--color-text-primary); }
-.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 6px 0; }
-.total-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 0; }
-.total-row .name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
-.total-row .val { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
-.fee-card { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 14px 16px; margin-bottom: 1.5rem; }
-.ref-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px; }
-.ref-input { width: 100%; border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 12px; font-size: 14px; background: var(--color-background-primary); color: var(--color-text-primary); outline: none; }
-.ref-input:focus { border-color: var(--color-border-info, #378ADD); }
-.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: flex-end; justify-content: center; }
-.modal-bg.open { display: flex; }
-.modal { background: var(--color-background-primary); border-radius: 16px 16px 0 0; width: 100%; max-width: 500px; padding: 1rem; max-height: 70vh; display: flex; flex-direction: column; }
-.modal-title { font-size: 15px; font-weight: 500; margin-bottom: 10px; color: var(--color-text-primary); }
-.search-input { width: 100%; border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 9px 12px; font-size: 14px; background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; margin-bottom: 8px; }
-.currency-list { overflow-y: auto; flex: 1; }
-.currency-item { display: flex; align-items: center; gap: 10px; padding: 10px 8px; cursor: pointer; border-radius: 8px; font-size: 14px; color: var(--color-text-primary); }
-.currency-item:hover { background: var(--color-background-secondary); }
-.currency-item .code { font-weight: 500; min-width: 40px; }
-.currency-item .name { color: var(--color-text-secondary); font-size: 13px; }
-.currency-item.selected { background: var(--color-background-info, #E6F1FB); }
-.close-btn { width: 100%; margin-top: 10px; padding: 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; font-size: 14px; cursor: pointer; color: var(--color-text-primary); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f2f2f2;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 1.75rem;
+  }
+
+  /* --- Field label row --- */
+  .field-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .field-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+  }
+
+  /* --- Input card --- */
+  .input-card {
+    background: #fff;
+    border: 1.5px solid #ddd;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+    transition: border-color 0.15s;
+  }
+  .input-card:focus-within {
+    border-color: #111;
+  }
+  .input-card input[type="number"] {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+    background: transparent;
+    min-width: 0;
+    -moz-appearance: textfield;
+  }
+  .input-card input[type="number"]::-webkit-outer-spin-button,
+  .input-card input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  /* --- Currency selector button --- */
+  .currency-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: #f5f5f5;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #111;
+    white-space: nowrap;
+    padding: 8px 12px;
+    border-radius: 50px;
+    transition: background 0.15s;
+  }
+  .currency-btn:hover { background: #e8e8e8; }
+  .flag { font-size: 20px; line-height: 1; }
+  .chevron { font-size: 10px; color: #666; margin-left: 2px; }
+
+  /* --- Hint text --- */
+  .hint {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 12px;
+  }
+
+  /* --- Info card (rates) --- */
+  .info-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 6px 0;
+  }
+  .info-row + .info-row {
+    margin-top: 2px;
+  }
+  .info-row .row-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .info-row .row-name {
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid #999;
+    font-size: 10px;
+    color: #999;
+    cursor: default;
+    flex-shrink: 0;
+  }
+  .info-row .row-sub {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .info-row .row-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    text-align: right;
+  }
+
+  /* --- Fee card --- */
+  .fee-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 1.5rem;
+  }
+  .fee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .fee-row .row-name {
+    font-size: 14px;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .fee-row .row-val {
+    font-size: 14px;
+    color: #444;
+  }
+  .fee-divider {
+    height: 1px;
+    background: #ececec;
+    margin: 10px 0;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 4px 0 0;
+  }
+  .total-row .row-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .total-row .row-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+  }
+  .total-row .row-sub {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .total-row .row-val {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111;
+  }
+
+  /* --- Reference --- */
+  .ref-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 8px;
+  }
+  .ref-input {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 14px;
+    background: #fff;
+    color: #111;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .ref-input:focus { border-color: #111; }
+
+  /* --- Modal --- */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-width: 520px;
+    padding: 1.25rem 1rem 1rem;
+    max-height: 72vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #111;
+  }
+  .search-input {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    background: #f5f5f5;
+    color: #111;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  .currency-list { overflow-y: auto; flex: 1; }
+  .currency-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #111;
+  }
+  .currency-item:hover { background: #f5f5f5; }
+  .currency-item .code { font-weight: 600; min-width: 42px; }
+  .currency-item .name { color: #888; font-size: 13px; }
+  .currency-item.selected { background: #f0f0f0; }
+  .close-btn {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: #111;
+  }
+  .close-btn:hover { background: #f5f5f5; }
 </style>
+</head>
+<body>
 
 <div class="wrap">
   <h1>Convert funds</h1>
 
-  <div class="label-row">
-    <span class="label">You convert</span>
-    <span class="max-label" id="max-label">Max USD 0.00 ↘</span>
+  <div class="field-label-row">
+    <span class="field-label">You convert</span>
   </div>
-  <div class="field">
-    <input type="number" id="from-amount" value="3000" min="0" step="any" />
+  <div class="input-card">
+    <input type="number" id="from-amount" value="3000" min="0" step="any" placeholder="0" />
     <button class="currency-btn" onclick="openModal('from')">
       <span class="flag" id="from-flag">🇺🇸</span>
       <span id="from-code">USD</span>
@@ -59,11 +314,11 @@ h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin
     </button>
   </div>
 
-  <div class="label-row">
-    <span class="label">You receive</span>
+  <div class="field-label-row">
+    <span class="field-label">You receive</span>
   </div>
-  <div class="field">
-    <input type="number" id="to-amount" value="" min="0" step="any" placeholder="0.00" />
+  <div class="input-card">
+    <input type="number" id="to-amount" value="2500" min="0" step="any" placeholder="0" />
     <button class="currency-btn" onclick="openModal('to')">
       <span class="flag" id="to-flag">🇪🇺</span>
       <span id="to-code">EUR</span>
@@ -74,26 +329,33 @@ h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin
   <p class="hint">Rates update every 5 seconds</p>
 
   <div class="info-card">
-    <div class="info-row"><span class="name">Mid-market rate ⓘ</span><span class="val" id="mid-rate">—</span></div>
-    <div class="info-row"><span class="name">Your rate ⓘ <span style="font-size:11px;font-weight:400;color:var(--color-text-tertiary)">Net rate incl. FX fee</span></span><span class="val" id="your-rate">—</span></div>
+    <div class="info-row">
+      <div class="row-left">
+        <span class="row-name">Mid-market rate <span class="info-icon">i</span></span>
+      </div>
+      <span class="row-val" id="mid-rate">—</span>
+    </div>
+    <div class="info-row">
+      <div class="row-left">
+        <span class="row-name">Your rate <span class="info-icon">i</span></span>
+        <span class="row-sub">Net rate including FX fee</span>
+      </div>
+      <span class="row-val" id="your-rate">—</span>
+    </div>
   </div>
 
   <div class="fee-card">
-    <div class="info-row">
-      <span class="name">FX fee <span id="fx-pct">0.35</span>%
-        <span style="font-size:11px;margin-left:4px;">
-          <input type="number" id="fx-fee-input" value="0.35" min="0" max="5" step="0.01"
-            style="width:52px;font-size:12px;padding:2px 4px;border:1px solid var(--color-border-tertiary);border-radius:4px;background:var(--color-background-secondary);color:var(--color-text-primary);outline:none;"
-            title="Editar FX fee %" />
-          %
-        </span>
-      </span>
-      <span class="val" id="fx-fee-usd">—</span>
+    <div class="fee-row">
+      <span class="row-name">FX fee 0.35% <span class="info-icon">i</span></span>
+      <span class="row-val" id="fx-fee-amt">—</span>
     </div>
-    <div class="divider"></div>
+    <div class="fee-divider"></div>
     <div class="total-row">
-      <span class="name">Total fees <span style="font-size:11px;font-weight:400;color:var(--color-text-tertiary)">Included in amount</span></span>
-      <span class="val" id="total-fees">—</span>
+      <div class="row-left">
+        <span class="row-name">Total fees</span>
+        <span class="row-sub">Included in <span id="from-code-ref">USD</span> amount</span>
+      </div>
+      <span class="row-val" id="total-fees">—</span>
     </div>
   </div>
 
@@ -106,7 +368,7 @@ h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin
 <div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
   <div class="modal">
     <p class="modal-title">Select currency</p>
-    <input type="text" class="search-input" id="modal-search" placeholder="Search..." oninput="filterCurrencies()" />
+    <input type="text" class="search-input" id="modal-search" placeholder="Search currency..." oninput="filterCurrencies()" />
     <div class="currency-list" id="currency-list"></div>
     <button class="close-btn" onclick="closeModalDirect()">Close</button>
   </div>
@@ -151,7 +413,6 @@ const CURRENCIES = [
   {code:'CZK',name:'Czech Koruna',flag:'🇨🇿'},
   {code:'RON',name:'Romanian Leu',flag:'🇷🇴'},
   {code:'BGN',name:'Bulgarian Lev',flag:'🇧🇬'},
-  {code:'HRK',name:'Croatian Kuna',flag:'🇭🇷'},
   {code:'RUB',name:'Russian Ruble',flag:'🇷🇺'},
   {code:'UAH',name:'Ukrainian Hryvnia',flag:'🇺🇦'},
   {code:'EGP',name:'Egyptian Pound',flag:'🇪🇬'},
@@ -165,11 +426,12 @@ const CURRENCIES = [
   {code:'TWD',name:'Taiwan Dollar',flag:'🇹🇼'},
 ];
 
+const FX_FEE_PCT = 0.35;
+
 let fromCurrency = 'USD';
 let toCurrency = 'EUR';
 let rates = {};
 let activeModal = null;
-let lastEdited = 'from';
 
 async function fetchRates() {
   try {
@@ -182,54 +444,43 @@ async function fetchRates() {
       if (usdRates[key]) rates[c.code] = usdRates[key];
     }
     rates['USD'] = 1;
-    updateCalc();
   } catch(e) {
     rates = {USD:1,EUR:0.864,GBP:0.764,JPY:149.5,AUD:1.532,CAD:1.356,CHF:0.896,CNY:7.24,HKD:7.82,SGD:1.34,MXN:17.1,BRL:4.97,ARS:870,CLP:968,COP:3900,PEN:3.7,UYU:38.5,INR:83.1,KRW:1325,THB:35.1,MYR:4.72,IDR:15600,PHP:56.2,ZAR:18.6,TRY:30.5,SAR:3.75,AED:3.67,ILS:3.74,PLN:4.03,NZD:1.63,SEK:10.4,NOK:10.5,DKK:6.9};
-    updateCalc();
   }
+  updateCalc();
 }
 
 function getRate(code) { return rates[code] || 1; }
 
-function getFxPct() {
-  return parseFloat(document.getElementById('fx-fee-input').value) || 0;
+function fmt(n, decimals = 4) {
+  return n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
 
 function updateCalc() {
   if (!rates.USD) return;
-  const fxPct = getFxPct();
+
   const midFrom = getRate(fromCurrency);
   const midTo = getRate(toCurrency);
   const midRate = midTo / midFrom;
-  const yourRate = midRate * (1 - fxPct / 100);
+  const yourRate = midRate * (1 - FX_FEE_PCT / 100);
 
   const fromAmt = parseFloat(document.getElementById('from-amount').value) || 0;
-  const toAmt = parseFloat(document.getElementById('to-amount').value) || 0;
 
-  if (lastEdited === 'from') {
-    const received = fromAmt * yourRate;
-    document.getElementById('to-amount').value = received > 0 ? received.toFixed(2) : '';
-  } else {
-    const needed = toAmt / yourRate;
-    document.getElementById('from-amount').value = needed > 0 ? needed.toFixed(2) : '';
-  }
+  const feeAmt = fromAmt * (FX_FEE_PCT / 100);
 
-  const currentFrom = parseFloat(document.getElementById('from-amount').value) || 0;
-  const feeAmt = currentFrom * (fxPct / 100);
-  const fromCode = fromCurrency;
-  const toCode = toCurrency;
-
-  document.getElementById('mid-rate').textContent = `${fromCode} 1 = ${toCode} ${midRate.toFixed(4)}`;
-  document.getElementById('your-rate').textContent = `${fromCode} 1 = ${toCode} ${yourRate.toFixed(4)}`;
-  document.getElementById('fx-pct').textContent = fxPct.toFixed(2);
-  document.getElementById('fx-fee-usd').textContent = `${fromCode} ${feeAmt.toFixed(2)}`;
-  document.getElementById('total-fees').textContent = `${fromCode} ${feeAmt.toFixed(2)}`;
-  document.getElementById('max-label').textContent = `Max ${fromCode} —`;
+  document.getElementById('mid-rate').textContent =
+    `${fromCurrency} 1 = ${toCurrency} ${fmt(midRate)}`;
+  document.getElementById('your-rate').textContent =
+    `${fromCurrency} 1 = ${toCurrency} ${fmt(yourRate)}`;
+  document.getElementById('fx-fee-amt').textContent =
+    `${fromCurrency} ${fmt(feeAmt, 2)}`;
+  document.getElementById('total-fees').textContent =
+    `${fromCurrency} ${fmt(feeAmt, 2)}`;
+  document.getElementById('from-code-ref').textContent = fromCurrency;
 }
 
-document.getElementById('from-amount').addEventListener('input', () => { lastEdited = 'from'; updateCalc(); });
-document.getElementById('to-amount').addEventListener('input', () => { lastEdited = 'to'; updateCalc(); });
-document.getElementById('fx-fee-input').addEventListener('input', updateCalc);
+document.getElementById('from-amount').addEventListener('input', updateCalc);
+document.getElementById('to-amount').addEventListener('input', updateCalc);
 
 function openModal(side) {
   activeModal = side;
@@ -238,8 +489,12 @@ function openModal(side) {
   document.getElementById('modal-bg').classList.add('open');
   setTimeout(() => document.getElementById('modal-search').focus(), 100);
 }
-function closeModal(e) { if (e.target === document.getElementById('modal-bg')) closeModalDirect(); }
-function closeModalDirect() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-bg')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal-bg').classList.remove('open');
+}
 
 function filterCurrencies() {
   renderList(document.getElementById('modal-search').value);
@@ -253,15 +508,16 @@ function renderList(q) {
     c.name.toLowerCase().includes(q.toLowerCase())
   );
   list.innerHTML = filtered.map(c => `
-    <div class="currency-item ${c.code === active ? 'selected' : ''}" onclick="selectCurrency('${c.code}','${c.flag}','${c.name}')">
-      <span style="font-size:20px">${c.flag}</span>
+    <div class="currency-item ${c.code === active ? 'selected' : ''}"
+         onclick="selectCurrency('${c.code}','${c.flag}')">
+      <span style="font-size:22px">${c.flag}</span>
       <span class="code">${c.code}</span>
       <span class="name">${c.name}</span>
     </div>
   `).join('');
 }
 
-function selectCurrency(code, flag, name) {
+function selectCurrency(code, flag) {
   if (activeModal === 'from') {
     fromCurrency = code;
     document.getElementById('from-flag').textContent = flag;
@@ -278,3 +534,5 @@ function selectCurrency(code, flag, name) {
 fetchRates();
 setInterval(fetchRates, 5000);
 </script>
+</body>
+</html>
