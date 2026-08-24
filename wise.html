@@ -164,8 +164,7 @@
   }
   .info-val { font-size: 15px; font-weight: 700; color: #111; }
 
-  .day-edit-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .day-edit-row input[type="text"] {
+  #day-input {
     font-size: 15px;
     font-weight: 700;
     color: #111;
@@ -176,16 +175,6 @@
     width: 130px;
     outline: none;
   }
-  .pencil-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    color: #888;
-    padding: 2px;
-    line-height: 1;
-  }
-  .pencil-btn:hover { color: #333; }
 
   .send-btn {
     margin-top: 1.25rem;
@@ -315,7 +304,6 @@
           <div class="info-val">
             <span id="day-display-wrap">
               <span id="day-display">Antes del &mdash;</span>
-              <button class="pencil-btn" onclick="editDay()" title="Editar día">✏️</button>
             </span>
           </div>
         </div>
@@ -494,28 +482,29 @@ function loadDay() {
   return localStorage.getItem(DAY_STORAGE_KEY) || 'sábado';
 }
 function renderDay() {
-  document.getElementById('day-display').textContent = `Antes del ${loadDay()}`;
+  const wrap = document.getElementById('day-display-wrap');
+  wrap.innerHTML = `<span id="day-display">Antes del ${loadDay()}</span>`;
+  attachDayTripleClick();
+}
+function attachDayTripleClick() {
+  const el = document.getElementById('day-display');
+  // No visible affordance on purpose — triggered only by a real triple-click (detail === 3).
+  el.addEventListener('click', (e) => { if (e.detail === 3) editDay(); });
 }
 function editDay() {
   const wrap = document.getElementById('day-display-wrap');
   const current = loadDay();
-  wrap.innerHTML = `
-    <span class="day-edit-row">
-      <input type="text" id="day-input" value="${current}" />
-      <button class="pencil-btn" onclick="saveDay()" title="Guardar">✅</button>
-    </span>
-  `;
+  wrap.innerHTML = `<input type="text" id="day-input" value="${current}" />`;
   const input = document.getElementById('day-input');
   input.focus();
   input.select();
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveDay(); });
+  input.addEventListener('blur', saveDay);
 }
 function saveDay() {
   const input = document.getElementById('day-input');
   const val = (input.value || '').trim() || 'sábado';
   localStorage.setItem(DAY_STORAGE_KEY, val);
-  const wrap = document.getElementById('day-display-wrap');
-  wrap.innerHTML = `<span id="day-display"></span> <button class="pencil-btn" onclick="editDay()" title="Editar día">✏️</button>`;
   renderDay();
 }
 
